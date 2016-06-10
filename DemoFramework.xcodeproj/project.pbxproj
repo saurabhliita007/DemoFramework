@@ -10,6 +10,8 @@
 		FA71B5B21D0AA65F009DB114 /* DemoFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = FA71B5B11D0AA65F009DB114 /* DemoFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA71B5B91D0AA65F009DB114 /* DemoFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA71B5AE1D0AA65F009DB114 /* DemoFramework.framework */; };
 		FA71B5BE1D0AA65F009DB114 /* DemoFrameworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA71B5BD1D0AA65F009DB114 /* DemoFrameworkTests.m */; };
+		FA71B5CA1D0AA673009DB114 /* Utility.h in Headers */ = {isa = PBXBuildFile; fileRef = FA71B5C81D0AA673009DB114 /* Utility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FA71B5CB1D0AA673009DB114 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = FA71B5C91D0AA673009DB114 /* Utility.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,8 @@
 		FA71B5B81D0AA65F009DB114 /* DemoFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA71B5BD1D0AA65F009DB114 /* DemoFrameworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoFrameworkTests.m; sourceTree = "<group>"; };
 		FA71B5BF1D0AA65F009DB114 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA71B5C81D0AA673009DB114 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		FA71B5C91D0AA673009DB114 /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,8 @@
 			children = (
 				FA71B5B11D0AA65F009DB114 /* DemoFramework.h */,
 				FA71B5B31D0AA65F009DB114 /* Info.plist */,
+				FA71B5C81D0AA673009DB114 /* Utility.h */,
+				FA71B5C91D0AA673009DB114 /* Utility.m */,
 			);
 			path = DemoFramework;
 			sourceTree = "<group>";
@@ -94,6 +100,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA71B5B21D0AA65F009DB114 /* DemoFramework.h in Headers */,
+				FA71B5CA1D0AA673009DB114 /* Utility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +115,7 @@
 				FA71B5AA1D0AA65F009DB114 /* Frameworks */,
 				FA71B5AB1D0AA65F009DB114 /* Headers */,
 				FA71B5AC1D0AA65F009DB114 /* Resources */,
+				FA71B5CC1D0AA6CF009DB114 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -190,11 +198,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		FA71B5CC1D0AA6CF009DB114 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nset +u\n# Avoid recursively calling this script.\nif [[ $SF_MASTER_SCRIPT_RUNNING ]]\nthen\nexit 0\nfi\nset -u\nexport SF_MASTER_SCRIPT_RUNNING=1\n\n\n# Constants\nSF_TARGET_NAME=${PROJECT_NAME}\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# Take build target\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\nSF_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\necho \"Could not find platform name from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SF_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\necho \"Please choose iPhone simulator as the build target.\"\nexit 1\nfi\n\nIPHONE_DEVICE_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos\n\n# Build the other (non-simulator) platform\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk iphoneos BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\" CONFIGURATION_BUILD_DIR=\"${IPHONE_DEVICE_BUILD_DIR}/arm64\" SYMROOT=\"${SYMROOT}\" ARCHS='arm64' VALID_ARCHS='arm64' $ACTION\n\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk iphoneos BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\"  CONFIGURATION_BUILD_DIR=\"${IPHONE_DEVICE_BUILD_DIR}/armv7\" SYMROOT=\"${SYMROOT}\" ARCHS='armv7 armv7s' VALID_ARCHS='armv7 armv7s' $ACTION\n\n# Copy the framework structure to the universal folder (clean it first)\nrm -rf \"${UNIVERSAL_OUTPUTFOLDER}\"\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework\"\n\n# Smash them together to combine all architectures\nlipo -create  \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/arm64/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/armv7/${PROJECT_NAME}.framework/${PROJECT_NAME}\" -output \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FA71B5A91D0AA65F009DB114 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA71B5CB1D0AA673009DB114 /* Utility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

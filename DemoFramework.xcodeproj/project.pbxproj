@@ -12,6 +12,7 @@
 		FA71B5BE1D0AA65F009DB114 /* DemoFrameworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA71B5BD1D0AA65F009DB114 /* DemoFrameworkTests.m */; };
 		FA71B5CA1D0AA673009DB114 /* Utility.h in Headers */ = {isa = PBXBuildFile; fileRef = FA71B5C81D0AA673009DB114 /* Utility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA71B5CB1D0AA673009DB114 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = FA71B5C91D0AA673009DB114 /* Utility.m */; };
+		FA71B5CE1D0AA8B1009DB114 /* DemoFramework.podspec in Resources */ = {isa = PBXBuildFile; fileRef = FA71B5CD1D0AA8B1009DB114 /* DemoFramework.podspec */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,7 @@
 		FA71B5BF1D0AA65F009DB114 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA71B5C81D0AA673009DB114 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		FA71B5C91D0AA673009DB114 /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
+		FA71B5CD1D0AA8B1009DB114 /* DemoFramework.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DemoFramework.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 		FA71B5A41D0AA65F009DB114 = {
 			isa = PBXGroup;
 			children = (
+				FA71B5CD1D0AA8B1009DB114 /* DemoFramework.podspec */,
 				FA71B5B01D0AA65F009DB114 /* DemoFramework */,
 				FA71B5BC1D0AA65F009DB114 /* DemoFrameworkTests */,
 				FA71B5AF1D0AA65F009DB114 /* Products */,
@@ -186,6 +189,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA71B5CE1D0AA8B1009DB114 /* DemoFramework.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
